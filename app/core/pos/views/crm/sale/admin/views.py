@@ -103,10 +103,10 @@ class SaleAdminCreateView(PermissionMixin, CreateView):
                     sale.payment_condition = request.POST['payment_condition']
                     sale.type_voucher = request.POST['type_voucher']
                     sale.igv = float(Company.objects.first().igv) / 100
-                    # sale.dscto = float(request.POST['dscto']) / 100
-                    sale.dscto = float(request.POST['dscto'])
-                    sale.save()
+                    sale.dscto = float(request.POST['dscto'])/100
 
+                    sale.save()
+                    
                     for i in json.loads(request.POST['products']):
                         prod = Product.objects.get(pk=i['id'])
                         saledetail = SaleDetail()
@@ -115,14 +115,15 @@ class SaleAdminCreateView(PermissionMixin, CreateView):
                         saledetail.price = float(i['price_current'])
                         saledetail.cant = float(i['cant'])
                         saledetail.subtotal = saledetail.price * saledetail.cant
-                        saledetail.dscto = float(i['dscto'])
+                        saledetail.dscto = float(i['dscto']) / 100
                         saledetail.total_dscto = saledetail.dscto * saledetail.subtotal
+                        
                         saledetail.total = saledetail.subtotal - saledetail.total_dscto
                         saledetail.save()
 
                         saledetail.product.stock -= Decimal(saledetail.cant)
                         saledetail.product.save()
-
+                    
                     sale.calculate_invoice()
 
                     if sale.payment_condition == 'credito':

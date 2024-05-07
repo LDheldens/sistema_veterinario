@@ -325,15 +325,14 @@ class Sale(models.Model):
     def calculate_invoice(self):
         subtotal = 0.00
         for d in self.saledetail_set.filter():
-            d.subtotal = float(d.price) * int(d.cant)
-            d.total_dscto = float(d.dscto)
+            d.subtotal = float(d.price) * float(d.cant)
+            d.total_dscto = float(d.dscto) * float(d.subtotal)
             d.total = d.subtotal - d.total_dscto
             d.save()
             subtotal += d.total
         self.subtotal = subtotal
         self.total_igv = self.subtotal * float(self.igv)
-        #self.total_dscto = self.subtotal * float(self.dscto)
-        self.total_dscto = float(self.dscto)
+        self.total_dscto = self.subtotal * float(self.dscto)
         self.total = float(self.subtotal) - float(self.total_dscto)
         self.save()
 

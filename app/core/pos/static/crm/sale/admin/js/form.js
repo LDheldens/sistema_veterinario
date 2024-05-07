@@ -39,8 +39,8 @@ var vents = {
         $.each(this.details.products, function (i, item) {
             item.cant = item.cant;
             item.subtotal = item.cant * parseFloat(item.price_current);
-            // item.total_dscto = (parseFloat(item.dscto) / 100) * item.subtotal;
-            item.total_dscto = (parseFloat(item.dscto))
+            item.total_dscto = (parseFloat(item.dscto) / 100) * item.subtotal;
+            // item.total_dscto = (parseFloat(item.dscto))
             item.total = item.subtotal - item.total_dscto;
             total += item.total;
         });
@@ -689,6 +689,7 @@ $(function () {
         .on('input', 'input[name="cant"]', function () {
             var tr = tblProducts.cell($(this).closest('td, li')).index();
             let fila = vents.details.products[tr.row]
+            
             if (fila.unit == 'kilogramo') {
                 // Si el producto es en kilogramos, tomar la cantidad como float
                 vents.details.products[tr.row].cant = parseFloat($(this).val());
@@ -707,6 +708,7 @@ $(function () {
             vents.calculate_invoice();
             $('td:eq(7)', tblProducts.row(tr.row).node()).html('S/.' + vents.details.products[tr.row].total_dscto.toFixed(2));
             $('td:eq(8)', tblProducts.row(tr.row).node()).html('S/.' + vents.details.products[tr.row].total.toFixed(2));
+            
         })
         .on('input', 'input[name="dscto_unitary"]', function () {
             var tr = tblProducts.cell($(this).closest('td, li')).index();
@@ -714,12 +716,14 @@ $(function () {
             vents.calculate_invoice();
             $('td:eq(7)', tblProducts.row(tr.row).node()).html('S/.' + vents.details.products[tr.row].total_dscto.toFixed(2));
             $('td:eq(8)', tblProducts.row(tr.row).node()).html('S/.' + vents.details.products[tr.row].total.toFixed(2));
+            
         })
         .on('click', 'a[rel="remove"]', function () {
             var tr = tblProducts.cell($(this).closest('td, li')).index();
             vents.details.products.splice(tr.row, 1);
             tblProducts.row(tr.row).remove().draw();
             vents.calculate_invoice()
+            
         });
 
     $('.btnSearchProducts').on('click', function () {
